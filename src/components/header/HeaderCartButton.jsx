@@ -28,6 +28,7 @@ const StyledButton = styled("button")`
   background-color: #5a1f08;
   padding: 0.75rem 2rem;
   border-radius: 30px;
+  
   &:hover,
   &:active {
     background-color: #310f02;
