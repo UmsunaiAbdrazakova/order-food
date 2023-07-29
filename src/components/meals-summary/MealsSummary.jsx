@@ -43,9 +43,16 @@ const MealsSummaryConainer = styled("div")`
   border-radius: 16px;
   padding: 1rem;
   box-shadow: 0px 6px 16px 0px #0000004d;
-  margin-top: -7rem;
+  margin-top: -10rem;
   position: relative;
   & > h2 {
     font-size: 2rem;
+    font-weight: 600;
+    padding: 1rem;
+  }
+  & > p {
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 1rem;
   }
 `;
