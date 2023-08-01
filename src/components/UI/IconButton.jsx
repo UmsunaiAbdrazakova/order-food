@@ -2,23 +2,28 @@ import React from "react";
 import styled from "styled-components";
 import { Button } from "./Button";
 
-const StyledIcon = styled.div`
-  display: flex;
-  align-items: center;
-  margin-right: 8px; 
-`;
-
-export const IconButton = ({ Icon, children, ...restProps }) => {
+export const IconButton = ({ Icon, onClick, type = "button", disabled }) => {
   return (
-    <Button {...restProps}>
-      <StyledIcon>
-        {Icon}
-      </StyledIcon>
-      {children}
-    </Button>
+    <StyledButton
+      onClick={onClick}
+      type={type}
+      variant="outlined"
+      disabled={disabled}
+    >
+      {Icon ? <Icon /> : null}
+    </StyledButton>
   );
 };
 
-
-
+const StyledButton = styled(Button)`
+  border-radius: 6px;
+  padding: 0.5rem 0.875rem;
+  display: grid;
+  place-items: center;
+  &:hover svg,
+  &:hover path {
+    fill: white;
+    stroke: white;
+  }
+`;
 

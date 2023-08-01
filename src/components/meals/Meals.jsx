@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components";
-import MealItem from "./MealItem";
+import React from 'react'
+import { styled } from 'styled-components'
+import { MealItem } from './meal-item/MealItem'
 
 const DUMMY_MEALS = [
   {
@@ -29,34 +29,50 @@ const DUMMY_MEALS = [
   },
 ];
 
-const Meals = () => {
-  const addToCartHandler = (amount) => {
-    console.log("Добавленные данные в корзину:", amount);
-  };
+export const Meals = () => {
+	return (
+		<Container>
+			<ul>
+				{DUMMY_MEALS.map((meal) => {
+					return (
+						<MealItem
+							key={meal.id}
+							title={meal.title}
+							description={meal.description}
+							price={meal.price}
+							id={meal.id}
+						/>
+					)
+				})}
+			</ul>
+		</Container>
+	)
+}
 
-  return (
-    <MealsContainer>
-      {DUMMY_MEALS.map((meal) => (
-        <MealItem
-        id={meal.id}
-          key={meal.id}
-          title={meal.title}
-          description={meal.description}
-          price={meal.price}
-          onAddToCart={addToCartHandler}
-        />
-      ))}
-    </MealsContainer>
-  );
-};
+const Container = styled('section')`
+	padding: 40px;
+	background-color: #ffffff;
+	border-radius: 1rem;
+	max-width: 60rem;
+	width: 90%;
+	margin: 2rem auto;
+	animation: meals-appear 1s ease-out forwards;
 
-const MealsContainer = styled("ul")`
-  list-style: none;
-  background-color: #ffffff;
-  border-radius: 16px;
-  max-width: 64rem;
-  width: 64rem;
-  margin: 0 auto;
-  margin-top: 2rem;
-`;
-export default Meals;
+	& > ul {
+		display: flex;
+		flex-direction: column;
+		row-gap: 24px;
+		list-style: none;
+	}
+
+	@keyframes meals-appear {
+		from {
+			opacity: 0;
+			transform: translateY(3rem);
+		}
+		to {
+			opacity: 1;
+			transform: translateY(0);
+		}
+	}
+`
