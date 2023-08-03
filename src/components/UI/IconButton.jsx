@@ -22,7 +22,6 @@ const StyledButton = styled(Button)`
   place-items: center;
   &:hover svg,
   &:hover path {
-    fill: white;
     stroke: white;
   }
 `;

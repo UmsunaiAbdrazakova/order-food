@@ -1,7 +1,18 @@
 import React from 'react'
+import { useContext } from 'react'
 import { styled } from 'styled-components'
+import { CartContext } from '../../store/cart-context'
 
-export const TotalAmount = ({ totalAmount = 0 }) => {
+
+export const TotalAmount = () => {
+	const { addedMeals } = useContext(CartContext)
+
+  const totalAmount = addedMeals.reduce((total, meal) => {
+    return total + meal.price * meal.amount
+  }, 0)
+
+  
+
 	return (
 		<Container>
 			<h3>Total Amount</h3>
