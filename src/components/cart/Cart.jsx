@@ -1,28 +1,117 @@
-import React, { useContext } from "react";
+import React, { useEffect, useState } from "react";
 import { Modal } from "../UI/Modal";
 import { CartItem } from "./CartItem";
 import { styled } from "styled-components";
 import { TotalAmount } from "./TotalAmount";
 import { Button } from "../UI/Button";
-import { CartContext } from "../../store/cart-context";
+
+const fetchCartMeals = async () => {
+  try {
+    const response = await fetch(
+      "http://ec2-3-76-44-71.eu-central-1.compute.amazonaws.com:5500/api/v1/basket",
+      {
+        headers: {
+          UserID: "Umsunai",
+        },
+      }
+    );
+    const result = await response.json();
+    return result.data;
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export const Cart = ({ onClose }) => {
-  const { addedMeals } = useContext(CartContext);
+  const [cartMeals, setCartMealse] = useState([]);
+
+  useEffect(() => {
+    fetchCartMeals().then((data) => {
+      setCartMealse(data.items);
+    });
+  }, []);
+
+  const increaseAmountHandler = async (id, amount) => {
+    try {
+      const response = await fetch(
+        `http://ec2-3-76-44-71.eu-central-1.compute.amazonaws.com:5500/api/v1/basketItem/${id}/update`,
+        {
+          method: "PUT",
+          headers: {
+            UserID: "Umsunai",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ amount: amount + 1 }),
+        }
+      );
+      const result = await response.json();
+      console.log(result);
+
+      fetchCartMeals().then((data) => setCartMealse(data.items));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const decreaseAmountHandler = async (id, amount) => {
+    try {
+      if (amount === 1) {
+        const response = await fetch(
+          `http://ec2-3-76-44-71.eu-central-1.compute.amazonaws.com:5500/api/v1/basketItem/${id}/delete`,
+          {
+            method: "DELETE",
+            headers: {
+              UserID: "Umsunai",
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const result = await response.json();
+        console.log(result);
+
+        fetchCartMeals().then((data) => setCartMealse(data.items));
+      } else {
+        const response = await fetch(
+          `http://ec2-3-76-44-71.eu-central-1.compute.amazonaws.com:5500/api/v1/basketItem/${id}/update`,
+          {
+            method: "PUT",
+            headers: {
+              UserID: "Umsunai",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ amount: amount - 1 }),
+          }
+        );
+        const result = await response.json();
+        console.log(result);
+        fetchCartMeals().then((data) => setCartMealse(data.items));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const totalAmount = cartMeals.reduce((total, meal) => {
+    return total + meal.price * meal.amount;
+  }, 0);
+
   return (
     <Modal onClose={onClose}>
       <Content>
         <CartList>
-          {addedMeals.map((meal) => (
+          {cartMeals.map((meal) => (
             <CartItem
               title={meal.title}
               amount={meal.amount}
               price={meal.price.toFixed(2)}
-              key={meal.id}
-              id={meal.id}
+              key={meal._id}
+              id={meal._id}
+              onDecreaseMealAmount={decreaseAmountHandler}
+              onIncreaseMealAmount={increaseAmountHandler}
             />
           ))}
         </CartList>
-        <TotalAmount />
+        <TotalAmount totalAmount={totalAmount} />
         <ActionsContainer>
           <Button variant="outlined" onClick={onClose}>
             Close
