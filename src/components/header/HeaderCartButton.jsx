@@ -1,90 +1,113 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { BasketIcon } from '../../assets'
-import { styled } from 'styled-components'
-import { ModalContext } from '../../store/modal-context'
-import { CartContext } from '../../store/cart-context'
+import React, { useContext, useEffect, useState } from "react";
+import { BasketIcon } from "../../assets";
+import { styled } from "styled-components";
+import { ModalContext } from "../../store/modal-context";
+import { CartContext } from "../../store/cart-context";
+
+const fetchAddedMealsCount = async () => {
+  try {
+    const response = await fetch(
+      "http://ec2-3-76-44-71.eu-central-1.compute.amazonaws.com:5500/api/v1/basket",
+      {
+        headers: {
+          UserID: "Umsunai",
+        },
+      }
+    );
+    const result = await response.json();
+    return result.data.items.reduce((acc, meal) => acc + meal.amount, 0);
+  } catch (error) {
+    console.log(error);
+    return 0;
+  }
+};
 
 export const HeaderCartButton = () => {
-	const { onOpen } = useContext(ModalContext)
-	const { addedMeals } = useContext(CartContext)
+  const { onOpen } = useContext(ModalContext);
+  const { addedMeals } = useContext(CartContext);
 
-	const [bump, setBump] = useState('')
+  const [bump, setBump] = useState("");
+  const [addedMealsCount, setAddedMealsCount] = useState(0);
 
-	const addedMealsCount = addedMeals.reduce((acc, meal) => {
-		return acc + meal.amount
-	}, 0)
+  useEffect(() => {
+    setBump("bump");
+    setTimeout(() => {
+      setBump("");
+    }, 300);
+  }, [addedMealsCount]);
 
-	useEffect(() => {
-		setBump('bump')
-		setTimeout(() => {
-			setBump('')
-		}, 300)
-	}, [addedMealsCount])
+  useEffect(() => {
+    fetchAddedMealsCount().then((count) => setAddedMealsCount(count));
+  }, [addedMeals]);
 
-	return (
-		<StyledButton onClick={onOpen} className={bump}>
-			<BasketIcon />
-			<span className='bump'>Your cart</span>
-			<Badge>{addedMealsCount}</Badge>
-		</StyledButton>
-	)
-}
+  console.log("Current addedMealsCount:", addedMealsCount);
 
-const Badge = styled('span')`
-	background-color: #8a2b06;
-	font-weight: 700;
-	padding: 4px 20px;
-	border-radius: 30px;
-	font-size: 20px;
-	margin-left: 1rem;
-`
+  return (
+    <StyledButton onClick={onOpen} className={bump}>
+      <BasketIcon />
+      <span className="bump">Your cart</span>
+      <Badge>{addedMealsCount}</Badge>
+    </StyledButton>
+  );
+};
 
-const StyledButton = styled('button')`
-	cursor: pointer;
-	border: none;
-	color: white;
-	background-color: #5a1f08;
-	padding: 0.75rem 2rem;
-	border-radius: 30px;
-	&:hover,
-	&:active {
-		background-color: #461805;
-	}
-	display: flex;
-	justify-content: space-around;
-	align-items: center;
+const Badge = styled("span")`
+  background-color: #8a2b06;
+  font-weight: 700;
+  padding: 4px 20px;
+  border-radius: 30px;
+  font-size: 20px;
+  margin-left: 1rem;
+`;
 
-	&.bump {
-		animation: BUMP 300ms ease-out;
-	}
+const StyledButton = styled("button")`
+  cursor: pointer;
+  border: none;
+  color: white;
+  background-color: #5a1f08;
+  padding: 0.75rem 2rem;
+  border-radius: 30px;
+  &:hover,
+  &:active {
+    background-color: #461805;
+  }
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 
-	&:hover > ${Badge} {
-		background-color: #671f03;
-		animation: BUMP 300ms ease-out;
-	}
-	& > svg {
-		margin-right: 0.5rem;
-	}
-	& > .bump {
-		font-size: 1rem;
-		font-weight: 600;
-	}
+  &.bump {
+    animation: BUMP 300ms ease-out;
+  }
 
-	@keyframes BUMP {
-		0% {
-			transform: scale(1);
-		}
-		10% {
-			transform: scale(0.9);
-		}
-		30% {
-			transform: scale(1.1);
-		}
-		50% {
-			transform: scale(1.15);
-		}
-		100% {
-			transform: scale(1);
-		}
-	}
-`
+  &:hover > ${Badge} {
+    background-color: #671f03;
+    animation: BUMP 300ms ease-out;
+  }
+
+  & > svg {
+    margin-right: 0.5rem;
+  }
+
+  & > .bump {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  @keyframes BUMP {
+    0% {
+      transform: scale(1);
+    }
+    10% {
+      transform: scale(0.9);
+    }
+    30% {
+      transform: scale(1.1);
+    }
+    50% {
+      transform: scale(1.15);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }`
+

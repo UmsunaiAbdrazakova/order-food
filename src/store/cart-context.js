@@ -6,6 +6,7 @@ export const CartContext = React.createContext({
   onAddMeal: () => {},
   onIncreaseMealAmount: () => {},
   onDecreaseMealAmount: () => {},
+  totalAddedMeals: 0,
 });
 
 const ADD_MEAL_TYPE = "ADD_MEAL";
@@ -94,6 +95,7 @@ const reduser = (state, action) => {
 export const CartProvider = ({ children }) => {
   const [cartState, dispatch] = useReducer(reduser, { addedMeals: [] });
   const { addedMeals = [] } = cartState;
+  
 
   const addMealHandler = (newMeal) => {
     dispatch({ type: ADD_MEAL_TYPE, payload: newMeal });
